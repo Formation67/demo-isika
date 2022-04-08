@@ -48,19 +48,14 @@ pipeline {
                 echo '-=- Clean docker images & container -=-'
                 sh 'ssh -v -o StrictHostKeyChecking=no vagrant@192.168.33.20 sudo docker stop demo-isika || true'
                 sh 'ssh -v -o StrictHostKeyChecking=no vagrant@192.168.33.20 sudo docker rm demo-isika || true'
-                sh 'docker rmi demo-isika || true'
+                sh 'ssh -v -o StrictHostKeyChecking=no vagrant@192.168.33.20 sudo docker rmi doum167/demo-isika || true'
+                sh 'docker rmi doum167/demo-isika || true'
             }
         } 
         stage('Construct image to Staging') {
             steps {
                 echo '-=- Docker build -=-'
-                sh 'docker build -t demo-isika .'
-            }
-        }       
-        stage('Tag') {
-            steps {
-                echo '-=- Login to dockerHub -=-'
-                sh 'docker tag demo-isika doum167/demo-isika'
+                sh 'docker build -t doum167/demo-isika .'
             }
         }       
         stage('Login') {
@@ -90,6 +85,7 @@ pipeline {
                 sh 'echo "Deploy into Prod"'
                 sh 'ssh -v -o StrictHostKeyChecking=no ubuntu@13.38.7.90 sudo docker stop demo-isika || true'
                 sh 'ssh -v -o StrictHostKeyChecking=no ubuntu@13.38.7.90 sudo docker rm demo-isika || true'
+                sh 'ssh -v -o StrictHostKeyChecking=no ubuntu@13.38.7.90 sudo docker rmi doum167/demo-isika || true'
                 sh 'ssh -v -o StrictHostKeyChecking=no ubuntu@13.38.7.90 sudo docker run -d --name demo-isika -p 8080:8080 doum167/demo-isika'
 
             }
